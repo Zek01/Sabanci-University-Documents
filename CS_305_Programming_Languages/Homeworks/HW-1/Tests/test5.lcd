@@ -1,0 +1,14 @@
+/*
+	This is a multiline comment starting
+
+input A, B, C
+output D, E, F
+
+D = (A and B) xor C
+E = ((R or B) not C) and (A xor B)
+F = (S xor B) or (A and C)
+
+	This is a multiline comment ending
+*/
+
+evaluate X(A = false, B = false, C = false)

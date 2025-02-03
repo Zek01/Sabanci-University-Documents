@@ -1,0 +1,4 @@
+input AHMET, BEYZA, CEM
+output DENIZ, EFE, FIGAN
+"this is an illegal character: &"
+// There is no circuit here.

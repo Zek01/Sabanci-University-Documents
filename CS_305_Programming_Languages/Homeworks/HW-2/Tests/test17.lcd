@@ -1,0 +1,15 @@
+input X
+node A, B
+node C
+output W, U
+input Y, Z
+output T
+A = X or Y
+B = A xor Y
+C = Z and Y
+W = A and (not Z)
+U = B and C
+T = A or not (C or B)
+evaluate circuit1 (X = true, Y = true, Z = false)
+evaluate circuit2 (X = false, Z = true, Y = false)
+

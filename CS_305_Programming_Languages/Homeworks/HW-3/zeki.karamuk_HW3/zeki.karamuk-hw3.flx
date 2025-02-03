@@ -1,0 +1,95 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "zeki.karamuk-hw3.h"
+#include "zeki.karamuk-hw3.tab.h"
+
+void reportError(const char *name, const char *msg, int lineNum);
+
+int nestedComment = 0;
+%}
+
+%x COMMENT
+
+%option noyywrap
+%option yylineno
+
+%%
+
+"input"         { return tINPUT; }
+"output"        { return tOUTPUT; }
+"node"          { return tNODE; }
+"evaluate"      { return tEVALUATE; }
+"and"           { return tAND; }
+"or"            { return tOR; }
+"xor"           { return tXOR; }
+"not"           { return tNOT; }
+"true"          { 
+                        NumberNode num;
+                        num.value = strdup("1");
+                        if (num.value == NULL) {
+                            perror("Failed to duplicate '1' for true");
+                            exit(EXIT_FAILURE);
+                        }
+                        num.lineNum = yylineno;
+                        yylval.numberNode = num;
+                        return tTRUE; 
+                    }
+"false"         { 
+                        NumberNode num;
+                        num.value = strdup("0");
+                        if (num.value == NULL) {
+                            perror("Failed to duplicate '0' for false");
+                            exit(EXIT_FAILURE);
+                        }
+                        num.lineNum = yylineno;
+                        yylval.numberNode = num;
+                        return tFALSE; 
+                    }
+"("             { return tLPR; }
+")"             { return tRPR; }
+"="             { return tASSIGNMENT; }
+","             { return tCOMMA; }
+
+[a-zA-Z][a-zA-Z0-9_]* {
+                        IdentNode ident;
+                        ident.value = strdup(yytext);
+                        if (ident.value == NULL) {
+                            perror("Failed to duplicate identifier string");
+                            exit(EXIT_FAILURE);
+                        }
+                        ident.lineNum = yylineno;
+                        yylval.identNode = ident;
+                        return tIDENTIFIER;
+                    }
+
+[ \t]+          { }
+\n              { }
+"/*"            { 
+                        nestedComment++;
+                        BEGIN(COMMENT); 
+                    }
+
+<COMMENT>"/*"    { 
+                        nestedComment++; 
+                    }
+
+<COMMENT>"*/"    { 
+                        nestedComment--; 
+                        if(nestedComment == 0)
+                            BEGIN(INITIAL); 
+                    }
+
+<COMMENT>\n     { }
+<COMMENT>.      { }
+"//".*          { }
+.               { 
+                        char error_msg[100];
+                        sprintf(error_msg, "is undeclared");
+                        reportError(NULL, error_msg, yylineno);
+                        return yytext[0]; 
+                    }
+
+%%
+

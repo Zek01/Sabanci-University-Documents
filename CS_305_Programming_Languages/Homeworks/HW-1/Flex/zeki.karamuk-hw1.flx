@@ -1,0 +1,61 @@
+%{
+#include <stdio.h>
+#include <string.h>
+
+int comment_depth = 0;
+%}
+
+%option yylineno
+
+%%
+"input"		{ printf("%d_tINPUT\n", yylineno); }
+"output"	{ printf("%d_tOUTPUT\n", yylineno); }
+"node"		{ printf("%d_tNODE\n", yylineno); }
+"evaluate"	{ printf("%d_tEVALUATE\n", yylineno); }
+"and"		{ printf("%d_tAND\n", yylineno); }
+"or"		{ printf("%d_tOR\n", yylineno); }
+"xor"		{ printf("%d_tXOR\n", yylineno); }
+"not"		{ printf("%d_tNOT\n", yylineno); }
+"true"		{ printf("%d_tTRUE\n", yylineno); }
+"false"		{ printf("%d_tFALSE\n", yylineno); }
+"("		{ printf("%d_tLPR\n", yylineno); }
+")"		{ printf("%d_tRPR\n", yylineno); }
+"="		{ printf("%d_tASSIGN\n", yylineno); }
+","		{ printf("%d_tCOMMA\n", yylineno); }
+
+[a-zA-Z][a-zA-Z0-9_]* {printf("%d_tIDENTIFIER_(%s)\n", yylineno, yytext);}
+
+\n {}
+
+[ \t]+      {}
+
+"//".* {}
+
+"/*" {
+    comment_depth = 1;
+    while (comment_depth > 0) {
+        int c = input();
+        if (c == EOF)
+	{
+		break;
+	} 
+	else if (c == '*') 
+	{
+            if (input() == '/') {
+                comment_depth--;
+            }
+        } else if (c == '/') {
+            if (input() == '*') {
+                comment_depth++;
+            }
+        }
+    }
+}
+
+. { printf("%d_ILLEGAL_CHARACTER_(%s)\n", yylineno, yytext); }
+%%
+
+int main(int argc, char** argv) {
+    yylex(); 
+    return 0;
+}

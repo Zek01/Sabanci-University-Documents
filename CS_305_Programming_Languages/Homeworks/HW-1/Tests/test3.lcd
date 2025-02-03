@@ -1,0 +1,8 @@
+input X, Y, Z
+output W, U
+
+W = (X or Y) not Z
+
+U = (X and Z)
+
+evaluate circuit (X = true, Y = false, Z = false)

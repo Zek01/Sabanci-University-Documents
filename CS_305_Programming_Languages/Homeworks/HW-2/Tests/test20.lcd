@@ -1,0 +1,11 @@
+/*
+This is a multiline comment
+/*
+input A, B
+output E, F
+E = A and B
+F = A or B
+evaluate conf1 (A = true, B = false)
+*/
+*/
+
